@@ -1,0 +1,5 @@
+Gemfile.lock
+*.swp
+*.swo
+*.gem
+spec/*.db
