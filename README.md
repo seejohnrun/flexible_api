@@ -1,3 +1,5 @@
+__Don't use me yet - soon__
+
 # FlexibleAPI
 
 FlexibleAPI is a way to quickly build APIs inside of ActiveRecord models.
