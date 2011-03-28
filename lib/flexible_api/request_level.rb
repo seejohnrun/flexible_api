@@ -10,6 +10,7 @@ module FlexibleApi
       @includes = []
       @notations = {}
       @eaten_levels = []
+      @select_fields << "`#{@klass.table_name}`.#{@klass.primary_key}" # auto-select primary key
     end
 
     attr_reader :display_fields, :name, :notations
@@ -35,9 +36,12 @@ module FlexibleApi
     end
 
     def includes(association_name, options = {})
-      options.assert_valid_keys :request_level, :as
+      options.assert_valid_keys :request_level, :as, :requires
       association = @klass.reflect_on_all_associations.detect { |a| a.name == association_name.to_sym }
       raise "No such association on #{@klass.name}: #{association_name}" if association.nil? # TODO
+      # Allow requires to pass in
+      requires *options[:requires] if options.has_key?(:requires)
+      # Set the include options
       @includes << { 
         :name => options[:as] || association_name,
         :association => association, 
@@ -47,18 +51,27 @@ module FlexibleApi
 
     def requires(*requires_array)
       requires_array.each do |field|
-        @select_fields << "`#{@klass.table_name}`.#{field}"
+        if field.is_a?(String)
+          @select_fields << field
+        else
+          @select_fields << "`#{@klass.table_name}`.#{field}" if @klass.columns_hash.keys.include?(field.to_s)
+        end
       end
     end
 
     def all_fields
-      fields *@klass.columns_hash.keys
+      fields *@klass.columns_hash.keys.map(&:to_sym)
     end
 
     def fields(*field_array)
       field_array.each do |field|
-        @display_fields << field
-        @select_fields << "`#{@klass.table_name}`.#{field}" if @klass.columns_hash.keys.include?(field.to_s)
+        if field.is_a?(String)
+          @display_fields << field.split('.').last.to_sym
+          @select_fields << field
+        else
+          @display_fields << field
+          @select_fields << "`#{@klass.table_name}`.#{field}" if @klass.columns_hash.keys.include?(field.to_s)
+        end
       end
     end
 
@@ -81,6 +94,7 @@ module FlexibleApi
     end
 
     def receive(item)
+      return nil if item.nil? # method may be nil
       attributes = {}
       @eaten_levels.each do |level|
         attributes.merge! level.receive(item)
