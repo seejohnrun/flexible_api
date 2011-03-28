@@ -8,7 +8,8 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('sqlite3')
   s.add_dependency('activerecord')
   s.description = 'API for making APIs'
-  s.summary = 'API for making APIs'
+  s.homepage = 'http://github.com/seejohnrun/flexible_api'
+  s.summary = 'A flexible API for making APIs'
   s.email = 'john.crepezzi@gmail.com'
   s.files = Dir['lib/**/*.rb']
   s.has_rdoc = true
@@ -16,5 +17,6 @@ spec = Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.test_files = Dir.glob('spec/*.rb')
   s.version = FlexibleApi::VERSION
+  s.rubyforge_project = 'flexible_api'
 
 end
