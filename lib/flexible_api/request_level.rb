@@ -18,7 +18,7 @@ module FlexibleApi
     def to_hash
       {
         :name => @name,
-        :fields => select_field + notations.keys,
+        :fields => display_field + notations.keys,
         :includes => @includes.map do |inc|
           { :name => inc[:name], :type => inc[:association].name.to_s.pluralize.underscore.downcase, :request_level => inc[:request_level].name }
         end
@@ -82,6 +82,14 @@ module FlexibleApi
         selects = @select_fields.to_a
         @eaten_levels.each { |l| selects.concat l.select_field }
         selects
+      end
+    end
+
+    def display_field
+      @display_field_array ||= begin
+        displays = @display_fields.to_a
+        @eaten_levels.each { |l| displays.concat l.display_field }
+        displays
       end
     end
 
