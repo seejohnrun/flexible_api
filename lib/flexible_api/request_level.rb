@@ -7,13 +7,14 @@ module FlexibleApi
       @klass = klass
       @display_fields = Set.new
       @select_fields = Set.new
+      @scopes = []
       @includes = []
       @notations = {}
       @eaten_levels = []
       @select_fields << "`#{@klass.table_name}`.#{@klass.primary_key}" # auto-select primary key
     end
 
-    attr_reader :display_fields, :name, :notations
+    attr_reader :display_fields, :name, :notations, :scopes
 
     def to_hash
       {
@@ -27,6 +28,10 @@ module FlexibleApi
 
     def eat_level(name)
       @eaten_levels << @klass.find_level(name)
+    end
+
+    def scope(name, args)
+      @scopes << [name, args]
     end
 
     def notation(notation_name, options = {}, &block)

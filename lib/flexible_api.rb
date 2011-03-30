@@ -42,7 +42,11 @@ module FlexibleApi
     def find_all_hash(options = {})
       options.assert_valid_keys(:request_level)
       level = find_level(options[:request_level])
-      records = self.all(:select => level.select_field.join(', '), :include => level.include_field)
+
+      query = self
+      level.scopes.each { |s, args| query = query.send(s, *args) }
+
+      records = query.all(:select => level.select_field.join(', '), :include => level.include_field)
       records.map { |r| level.receive(r) }
     end
 
