@@ -30,7 +30,7 @@ module FlexibleApi
       @eaten_levels << @klass.find_level(name)
     end
 
-    def scope(name, args)
+    def scope(name, args = nil)
       @scopes << [name, args]
     end
 
