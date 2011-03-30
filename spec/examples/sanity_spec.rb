@@ -18,6 +18,10 @@ describe FlexibleApi do
     Thing.destroy_all
   end
 
+  it 'should be able to get its own version' do
+    FlexibleApi::VERSION.should_not be_empty
+  end
+
   it 'should be able to serialize an instance at a defined request level' do
     Thing.define_request_level :simple do |level|
       level.fields :id
