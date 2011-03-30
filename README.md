@@ -30,6 +30,16 @@ Which will preselect only the fields that it needs, and if you do:
 
 It will preselect everything it needs to do those queries efficiently.
 
+## Defining request levels
+
+    define_request_level :simple do
+      fields :one, :two, :three
+      notation(:name, :requires => [:this, :that]) { self.something }
+      requires :this
+      scope :published
+      scope :starts_with, 'a'
+    end
+
 ---
 
 ## Nesting
