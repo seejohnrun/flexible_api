@@ -14,7 +14,7 @@ module FlexibleApi
       @select_fields << "`#{@klass.table_name}`.#{@klass.primary_key}" # auto-select primary key
     end
 
-    attr_reader :display_fields, :name, :notations, :scopes
+    attr_reader :display_fields, :name, :notations
 
     def to_hash
       {
@@ -81,6 +81,15 @@ module FlexibleApi
     end
 
     #################################################
+
+    def scope_field
+      @scopes_array ||= begin
+        scopes = []
+        scopes.concat @scopes
+        @eaten_levels.each { |l| scopes.concat l.scope_field }
+        scopes
+      end
+    end
 
     def select_field
       @select_field_array ||= begin

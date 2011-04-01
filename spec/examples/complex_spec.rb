@@ -48,4 +48,16 @@ describe FlexibleApi do
     cups.size.should == 2
   end
 
+  it 'should be able to eat a level with a scope' do
+    Cup.create :name => 'john'
+    Cup.create :name => 'apple'
+
+    Cup.define_request_level :eats_scoped do
+      eat_level :scoped
+    end
+
+    cups = Cup.find_all_hash(:request_level => :eats_scoped)
+    cups.size.should == 1
+  end
+
 end

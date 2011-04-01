@@ -44,7 +44,7 @@ module FlexibleApi
       level = find_level(options[:request_level])
 
       query = self
-      level.scopes.each do |s, args|
+      level.scope_field.each do |s, args|
         query = args.nil? ? query.send(s) : query = query.send(s, *args)
       end
 
