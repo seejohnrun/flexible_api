@@ -16,6 +16,7 @@ module FlexibleApi
   end
 
   module ClassMethods
+    attr_accessor :levels
 
     def request_levels
       @levels.nil? ? [] : @levels.keys
@@ -60,6 +61,7 @@ module FlexibleApi
     def find_level(name = nil)
       @levels ||= {}
       level = name.nil? ? load_default_request_level : @levels[name.to_sym]
+      level = superclass.find_level(name) if level.nil? && superclass.present?
       raise NoSuchRequestLevelError.new(name, self.name) if level.nil?
       level
     end
