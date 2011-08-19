@@ -46,7 +46,12 @@ module FlexibleApi
       raise "No such method on #{@klass.name}: #{method_name}" if method.nil?
       notation_options = (options.has_key?(:requires) ? {:requires => options[:requires]} : {})
       notation(options[:as] || method_name, notation_options) do
-        options[:request_level] ? self.send(method_name).to_hash(options[:request_level]) : self.send(method_name).to_hash
+        method_contents = self.send(method_name)
+        if method_contents.is_a?(Array)
+          method_contents.map {|content| content.to_hash(options[:request_level]) }
+        else
+          method_contents.to_hash(options[:request_level])
+        end        
       end    
     end
 
