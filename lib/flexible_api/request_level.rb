@@ -39,6 +39,21 @@ module FlexibleApi
       requires *options[:requires]
       @notations[notation_name] = block
     end
+    
+    def method(method_name, options = {})
+      options.assert_valid_keys :request_level, :as, :requires
+      method = @klass.instance_methods.detect { |m| m == method_name.to_sym }
+      raise "No such method on #{@klass.name}: #{method_name}" if method.nil?
+      notation_options = (options.has_key?(:requires) ? {:requires => options[:requires]} : {})
+      notation(options[:as] || method_name, notation_options) do
+        (method_contents = self.send(method_name)) or next
+        if method_contents.is_a?(Array)
+          method_contents.map {|content| content.to_hash(options[:request_level]) }
+        else
+          method_contents.to_hash(options[:request_level])
+        end        
+      end    
+    end
 
     def includes(association_name, options = {})
       options.assert_valid_keys :request_level, :as, :requires
